@@ -12,6 +12,7 @@ const int TrigPin = 6;
 const int EchoPin = 7;
 const int BuzzerPin = 3;
 const int ButtonPin = 4;
+const int LedPin = 8;
 
 // Declaring or setting the threshold of the ultrasonic sensor
 const int DistanceThreshold = 50;   // In centimeter
@@ -21,16 +22,18 @@ float distance_cm, duration_us;
 
 
 void setup() {
+  
   Serial.begin(9600);   // Initialze serial Port
   pinMode(TrigPin, OUTPUT);   // Setting the trig_pin of the US
   pinMode(EchoPin, INPUT);    // Setting the echo_pin of the US
   pinMode(BuzzerPin, OUTPUT); // Setting the buzzer pin
+  pinMode(LedPin, OUTPUT);  // Setting the led pin
 
 }
 
 void loop() {
   // setting the button state of the button pin
-  int ButtonState = digitalRead(ButtonPin);
+  //int ButtonState = digitalRead(ButtonPin);
   
   // generate 10-microsecond pulse to Trig Pin
   digitalWrite(TrigPin, HIGH);
@@ -45,18 +48,16 @@ void loop() {
 
   if (distance_cm < DistanceThreshold){
     digitalWrite(BuzzerPin, HIGH);
+    LightDetect();
+    
     
     // perform whien the button is pressed or not
-    if (ButtonState == HIGH){
-      digitalWrite(BuzzerPin, LOW);
-      }
-    else {
-      digitalWrite(BuzzerPin, HIGH);
-      }
+    ButtonTest();
     }
 
    else {
     digitalWrite(BuzzerPin, LOW);
+    digitalWrite(LedPin, LOW);
     }
 
   // printing the distance value to Serial Monitor
@@ -67,3 +68,20 @@ void loop() {
   delay(500);
 
 }
+
+void LightDetect() {
+  digitalWrite(LedPin, HIGH);
+  delay(1000);
+  digitalWrite(LedPin, LOW);
+  delay(1000);
+  }
+
+void ButtonTest() {
+  int buttonState = digitalRead(ButtonPin);
+
+  if (buttonState == HIGH) {
+    Serial.println("The button is pressed...");
+    digitalWrite(LedPin, LOW);
+    digitalWrite(BuzzerPin, LOW);
+    }
+  }
